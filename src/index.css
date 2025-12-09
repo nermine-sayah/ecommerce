@@ -1,7 +1,7 @@
 :root{
   --bg: #faf7f5;
   --muted: #777;
-  --accent: #ff7a18;
+  --accent: #161515;
   --accent-dark: #ff6a00;
   --card-bg: #fff;
   --container: 1180px;
@@ -75,7 +75,7 @@ body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Ari
 .empty-cart h3{margin:0 0 8px;font-size:20px}
 .empty-cart p{color:var(--muted);margin:0 0 24px}
 .cart-items{display:flex;flex-direction:column;gap:16px}
-.cart-item{display:flex;gap:12px;padding:12px;background:#f9f9f9;border-radius:12px}
+.cart-item{display:flex;gap:12px;padding:12px;background:#2e22ca;border-radius:12px}
 .cart-item img{width:80px;height:80px;object-fit:cover;border-radius:8px}
 .cart-item-details{flex:1}
 .cart-item-details h4{margin:0 0 8px;font-size:16px}
