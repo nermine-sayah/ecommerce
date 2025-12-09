@@ -17,7 +17,7 @@ export default function Products() {
     { id: 3, title: 'Chaise de Salle à Manger Classique', price: 189, old: null, img: '/ecomerce-pic/pexels-fotoaibe-1571460.jpg' },
     { id: 4, title: 'Ensemble Salon de Luxe', price: 1450, old: 1799, img: '/ecomerce-pic/pexels-pixabay-279746.jpg' },
     { id: 5, title: 'Table à Manger en Bois', price: 599, old: null, img: '/ecomerce-pic/pexels-marianne-67058-238377.jpg' },
-    { id: 6, title: 'Chaise Contemporaine', price: 245, old: null, img: '/ecomerce-pic/pexels-pixabay-37347.jpg' }
+    { id: 6, title: 'chambre a coucher', price: 245, old: null, img: '/ecomerce-pic/pexels-pixabay-37347.jpg' }
   ]
 
   // useEffect s'exécute au chargement du composant
