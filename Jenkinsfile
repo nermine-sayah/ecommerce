@@ -13,21 +13,6 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                bat 'npm install'
-            }
-        }
-
-        stage('Build React App') {
-            environment {
-                CI = "false"
-            }
-            steps {
-                bat 'npm run build'
-            }
-        }
-
         stage('Docker Build') {
             steps {
                 bat 'docker build -t ecommerce_app .'
