@@ -2,79 +2,71 @@ pipeline {
     agent any
 
     triggers {
-        // Lance automatiquement la pipeline lors d'un push GitHub
         githubPush()
     }
 
     environment {
-        APP_NAME = "ecommerce_app"
-        IMAGE_NAME = "ecommerce_image"
-        CONTAINER_NAME = "ecommerce_container"
-        PORT_LOCAL = "3000"
-        PORT_DOCKER = "80"
         NODE_ENV = "development"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Fix Git Settings') {
             steps {
-                checkout scm
+                bat """
+                    git config --global http.version HTTP/1.1
+                    git config --global http.postBuffer 524288000
+                    git config --global http.maxRequestBuffer 1000M
+                    git config --global core.compression 0
+                """
             }
         }
 
-        stage('Load .env File') {
+        stage('Checkout') {
             steps {
-                script {
-                    if (fileExists('.env')) {
-                        echo "Loading .env variables..."
-                        def props = readProperties file: '.env'
-                        props.each { key, value ->
-                            env."${key}" = value
-                        }
-                    } else {
-                        echo ".env NOT FOUND - skipping loading env vars"
-                    }
-                }
+                checkout([$class: 'GitSCM',
+                    branches: [[name: "*/feature/jenkins"]],
+                    userRemoteConfigs: [[url: 'https://github.com/nermine-sayah/ecommerce-final-project.git']],
+                    extensions: [[$class: 'CloneOption', shallow: true, depth: 1]]
+                ])
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
+        stage('Build React App') {
+            steps {
+                bat 'npm run build'
             }
         }
 
         stage('Docker Build') {
             steps {
-                echo "Building Docker Image..."
-                bat """
-                    docker build -t %IMAGE_NAME% .
-                """
+                bat 'docker build -t ecommerce_app .'
             }
         }
 
-        stage('Stop Previous Container') {
+        stage('Run Container') {
             steps {
-                echo "Stopping existing container (if exists)..."
-                bat """
-                    docker stop %CONTAINER_NAME% || echo no container to stop
-                    docker rm %CONTAINER_NAME% || echo no container to remove
-                """
-            }
-        }
+                bat 'docker stop ecommerce_container || echo no container'
+                bat 'docker rm ecommerce_container || echo no container'
 
-        stage('Run New Container') {
-            steps {
-                echo "Running new Docker Container..."
-
-                bat """
-                    docker run -d ^
-                    --name %CONTAINER_NAME% ^
-                    -p %PORT_LOCAL%:%PORT_DOCKER% ^
-                    %IMAGE_NAME%
-                """
+                bat '''
+                    docker run -d -p 3000:80 ^
+                    --env-file .env ^
+                    --name ecommerce_container ecommerce_app
+                '''
             }
         }
     }
 
     post {
         always {
-            echo "Pipeline Finished Successfully"
+            bat 'echo "Pipeline Finished"'
         }
     }
 }
