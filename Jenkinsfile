@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // نسحب الكود من Git
                 checkout scm
             }
         }
@@ -17,10 +18,11 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                // إيقاف وإزالة أي container سابق
+                // حذف الحاوية القديمة لو موجودة
                 bat 'docker stop ecommerce_container || echo no container'
                 bat 'docker rm ecommerce_container || echo no container'
-                // تشغيل الصورة الجديدة
+
+                // تشغيل الحاوية الجديدة
                 bat 'docker run -d -p 3000:80 --name ecommerce_container ecommerce_app'
             }
         }
@@ -28,7 +30,8 @@ pipeline {
 
     post {
         always {
-            bat 'echo "Pipeline Finished"'
+            // رسالة نهاية البايبلاين
+            bat 'echo Pipeline Finished'
         }
     }
 }
