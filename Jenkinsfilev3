@@ -14,11 +14,11 @@ pipeline {
             }
             steps {
                 echo "Building for tag: ${env.GIT_TAG_NAME}"
-                sh 'docker build -t ecommerce:${env.GIT_TAG_NAME} .'
+                bat 'docker build -t ecommerce:${env.GIT_TAG_NAME} .'
 
                 // Création d'un fichier log et info Docker pour artefacts
-                sh 'mkdir -p logs && echo "Docker build log" > logs/docker-build.log'
-                sh "mkdir -p docker-images && echo 'ecommerce:${env.GIT_TAG_NAME}' > docker-images/tag-info.txt"
+                bat 'mkdir -p logs && echo "Docker build log" > logs/docker-build.log'
+                bat "mkdir -p docker-images && echo 'ecommerce:${env.GIT_TAG_NAME}' > docker-images/tag-info.txt"
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
             }
             steps {
                 echo "Pushing Docker image for tag: ${env.GIT_TAG_NAME}"
-                sh 'docker push ecommerce:${env.GIT_TAG_NAME}'
+                bat 'docker push ecommerce:${env.GIT_TAG_NAME}'
             }
         }
 

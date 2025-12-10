@@ -16,7 +16,7 @@ pipeline {
                 // sh 'npm install && npm run build'
 
                 // Création d'un fichier de log pour montrer les artefacts
-                sh 'mkdir -p logs && echo "Build log" > logs/build.log'
+                bat 'mkdir -p logs && echo "Build log" > logs/build.log'
             }
         }
 
