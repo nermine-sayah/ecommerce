@@ -4,20 +4,21 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // نعمل checkout للكود
                 checkout scm
             }
         }
 
         stage('Build') {
             when {
-                buildingTag() // يتنفذ كان البيلد جاي من tag
+                buildingTag()
             }
             steps {
                 echo "Building for tag: ${env.GIT_TAG_NAME}"
-                
-                // مثال: build docker image
                 sh 'docker build -t ecommerce:${env.GIT_TAG_NAME} .'
+
+                // Création d'un fichier log et info Docker pour artefacts
+                sh 'mkdir -p logs && echo "Docker build log" > logs/docker-build.log'
+                sh "mkdir -p docker-images && echo 'ecommerce:${env.GIT_TAG_NAME}' > docker-images/tag-info.txt"
             }
         }
 
@@ -28,6 +29,18 @@ pipeline {
             steps {
                 echo "Pushing Docker image for tag: ${env.GIT_TAG_NAME}"
                 sh 'docker push ecommerce:${env.GIT_TAG_NAME}'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            when {
+                buildingTag()
+            }
+            steps {
+                echo "Archiving artifacts for tag: ${env.GIT_TAG_NAME}"
+                archiveArtifacts artifacts: 'build/**'
+                archiveArtifacts artifacts: 'logs/**'
+                archiveArtifacts artifacts: 'docker-images/**'
             }
         }
     }

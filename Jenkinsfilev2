@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     triggers {
-        // هذا trigger خاص بالـ GitHub Pull Request
+        // Trigger GitHub Pull Request
         githubPullRequest()
     }
 
@@ -17,10 +17,21 @@ pipeline {
         stage('Build & Test') {
             steps {
                 echo "Running build and tests for the PR..."
-                // مثال: لو عندك Node.js project
                 bat 'npm install'
                 bat 'npm run build'
                 bat 'npm test'
+
+                // Création d'un fichier log pour montrer les artefacts
+                bat 'mkdir logs && echo PR build log > logs/pr-build.log'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                echo "Archiving PR build results..."
+                archiveArtifacts artifacts: 'build/**'
+                archiveArtifacts artifacts: 'logs/**'
+                archiveArtifacts artifacts: 'test-results/**'  // si tu as les résultats de test
             }
         }
     }
