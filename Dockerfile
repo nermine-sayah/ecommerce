@@ -1,12 +1,24 @@
+# مرحلة البناء
 FROM node:18-alpine AS builder
+
 WORKDIR /app
 
+# نسخ package.json و package-lock.json
 COPY package*.json ./
-RUN npm install
 
+# تثبيت كل dependencies
+RUN npm install --legacy-peer-deps
+
+# تثبيت vite عالميًا عشان يكون متاح
+RUN npm install -g vite
+
+# نسخ باقي الملفات
 COPY . .
-RUN npm run build
 
+# build المشروع
+RUN vite build
+
+# مرحلة nginx النهائية
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
