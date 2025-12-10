@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  ecommerce:
+    build: .
+    container_name: ecommerce_app
+    ports:
+      - "8080:80"   # ربط البورت 80 في الـ container مع 8080 على الماكينة
+    restart: unless-stopped
