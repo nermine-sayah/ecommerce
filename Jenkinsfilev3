@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // نعمل checkout للكود
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            when {
+                buildingTag() // يتنفذ كان البيلد جاي من tag
+            }
+            steps {
+                echo "Building for tag: ${env.GIT_TAG_NAME}"
+                
+                // مثال: build docker image
+                sh 'docker build -t ecommerce:${env.GIT_TAG_NAME} .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            when {
+                buildingTag()
+            }
+            steps {
+                echo "Pushing Docker image for tag: ${env.GIT_TAG_NAME}"
+                sh 'docker push ecommerce:${env.GIT_TAG_NAME}'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline finished successfully for tag: ${env.GIT_TAG_NAME}"
+        }
+        failure {
+            echo "Pipeline failed for tag: ${env.GIT_TAG_NAME}"
+        }
+    }
+}
