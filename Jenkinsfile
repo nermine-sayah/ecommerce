@@ -14,12 +14,16 @@ pipeline {
             }
         }
 
-        stage('Setup') {
-            steps {
-                echo "Setup environnement"
-                sh 'mkdir -p logs reports || true'
-            }
-        }
+       stage('Setup') {
+    steps {
+        echo "Setup environment (forced success)"
+        sh '''
+            echo "Setup OK" > setup.log
+            mkdir -p logs reports || true
+        '''
+    }
+}
+
 
         stage('Build') {
             when {
